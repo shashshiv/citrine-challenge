@@ -23,21 +23,25 @@ tic % Start the timer
 %% Reads the input from a input text file and converts to data structure
 [dimensionality,feasiblePoint,constraintArray]= parseInput(strcat(inputFileName,extInput));
 
+%% Parse and analyse constraints in matlab format
+[constraintArray] = constraintExpressions(constraintArray);
+
 %% Check for the validity of example feasible point and return error if its not
 checkFeasiblePoint(constraintArray, feasiblePoint);
 
 %% Utilizes latin hypercube sampling with prescribed #samples and dimensionality
-sampleFactor = 10;
+sampleFactor = 1000;
 X = lhsdesign(sampleFactor*n_results,dimensionality,'smooth','off');
-
+    
 %% Satisfies the constraints and check for accept/reject
 acceptedVectors = 0;
 acceptedIdx = 0; 
-sampleIdx = 1; 
-while acceptedVectors< n_results-1   
+sampleIdx = 1;
+
+while acceptedVectors< n_results-1  
     sampleVector = X(sampleIdx,:)';
-    [cumulativeCounter] = constraintExpressions(constraintArray, sampleVector);
-    acceptedVectors = acceptedVectors + cumulativeCounter;
+    [cumulativeCounter]= acceptReject(constraintArray, sampleVector);
+    acceptedVectors = acceptedVectors + cumulativeCounter
     if cumulativeCounter
        acceptedIdx = [acceptedIdx; sampleIdx]; 
     end

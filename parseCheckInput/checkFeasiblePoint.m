@@ -1,7 +1,7 @@
 function [] = checkFeasiblePoint(constraintArray, feasiblePoint)
 
     % Returns flag based on constraint satisfaction
-    [cumulativeCounter]= constraintExpressions(constraintArray, feasiblePoint);
+    [cumulativeCounter]= acceptReject(constraintArray, feasiblePoint);
     
     % Return error if constraints not satisfied
     if ~cumulativeCounter

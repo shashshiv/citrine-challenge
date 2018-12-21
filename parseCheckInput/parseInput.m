@@ -19,11 +19,12 @@ constraintArray = {};
 while ~feof(fileID)
     if strcmp(checkComment(1),'#')
         checkComment = fgetl(fileID);
+    else
+        constraintArray = [constraintArray; checkComment];
+        checkComment = fgetl(fileID);
     end
-
-    constraintArray = [constraintArray; checkComment];
-    checkComment = fgetl(fileID);
 end
+constraintArray = [constraintArray; checkComment];
 
 fclose(fileID);
 end
