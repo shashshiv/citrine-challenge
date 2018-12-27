@@ -1,4 +1,4 @@
-function []= sampler(inputFilePath, outputFilePath, n_results)
+function []= sampler_MC(inputFilePath, outputFilePath, n_results)
 %--------------------------------------------------------------------------
 % sampler - This is the main code which runs all the subroutines
 %
@@ -30,8 +30,8 @@ tic % Start the timer
 checkFeasiblePoint(constraintArray, feasiblePoint);
 
 %% Utilizes latin hypercube sampling with prescribed #samples and dimensionality
-sampleFactor = 1000;
-X = lhsdesign(sampleFactor*n_results,dimensionality,'smooth','off');
+sampleFactor = 10000;
+X = lhsdesign(sampleFactor*n_results,dimensionality,'criterion','correlation');
     
 %% Satisfies the constraints and check for accept/reject
 acceptedVectors = 0;
@@ -41,7 +41,7 @@ sampleIdx = 1;
 while acceptedVectors< n_results-1  
     sampleVector = X(sampleIdx,:)';
     [cumulativeCounter]= acceptReject(constraintArray, sampleVector);
-    acceptedVectors = acceptedVectors + cumulativeCounter
+    acceptedVectors = acceptedVectors + cumulativeCounter;
     if cumulativeCounter
        acceptedIdx = [acceptedIdx; sampleIdx]; 
     end
