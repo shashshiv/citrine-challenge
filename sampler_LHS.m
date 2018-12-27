@@ -32,8 +32,8 @@ thresholdDimensions = 2;
 
 %% Suitable for lower dimensional problem: Utilizes latin hypercube sampling with prescribed #samples and dimensionality
 if dimensionality < thresholdDimensions
-    sampleFactor = 1000;% maximized the sample factor if this fails then Method 2
-    X = lhsdesign(sampleFactor*n_results,dimensionality,'criterion','maximin');
+    maxSamplingFactor = 1000;% maximized the sample factor if this fails then Method 2
+    X = lhsdesign(maxSamplingFactor*n_results,dimensionality,'criterion','maximin');
 
     %% Satisfies the constraints and check for accept/reject
     acceptedVectors = 0;
@@ -55,16 +55,16 @@ if dimensionality < thresholdDimensions
     dlmwrite(outputFilePath,[feasiblePoint; X(acceptedIdx(2:end),:)], 'delimiter', '\t');
 
 else
-    % Method 2 also util9izes the Latin hypercube except now we use the
+    % Method 2 also utilizes the Latin hypercube except now we use the
     % example point and LHS on smaller number of dimensions and keep
     % reducing number of dimensions sampled if rejection is very high
-    sampleFactor = 5000;% maximized the sample factor if this fails then Method 2
-    samplePerDimension = ceil(sampleFactor*n_results / dimensionality);
+    maxSamplingFactor = 5000;% maximized the sample factor if this fails then Method 2
+    samplePerDimension = ceil(maxSamplingFactor*n_results / dimensionality);
     cumulativeX = feasiblePoint;
     
     for iDimension = 1:dimensionality
-        %tmpSamples = lhsdesign(samplePerDimension,1,'criterion','correlation');
-        tmpSamples = lhsnorm(feasiblePoint(iDimension),0.1,samplePerDimension);
+        tmpSamples = lhsdesign(samplePerDimension,1,'criterion','correlation');
+        %tmpSamples = lhsnorm(feasiblePoint(iDimension),0.1,samplePerDimension);
         X = repmat(feasiblePoint, samplePerDimension,1);
         X(:,iDimension) = tmpSamples;
         %% Satisfies the constraints and check for accept/reject
@@ -82,8 +82,6 @@ else
 
             sampleIdx = sampleIdx + 1;
         end
-        iDimension
-        acceptedVectors
         cumulativeX = [cumulativeX; X(acceptedIdx(2:end),:)];
     end
     %% Save samples to specified text file with space delimiters
